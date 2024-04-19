@@ -34,7 +34,7 @@ async def get_events(
 ):
     if ends_at <= starts_at:
         raise HTTPException(400, "end date should be greater than start date")
-    # redis_client = get_async_redis_client()
+
     redis_key = f"events_{starts_at}_{ends_at}"
     redis_events_json = await get_events_from_redis(redis_key, redis_client)
     if redis_events_json:
@@ -44,12 +44,9 @@ async def get_events(
         )
         return result
 
-        # return [GetEventModel.model_validate(json.loads(redis_event)) for redis_event in redis_events]
-
     async with Database() as async_session:
         event_schemas = await get_events_from_db(starts_at, ends_at, async_session)
         if event_schemas:
             await set_events_in_redis(redis_key, event_schemas, redis_client)
             return [GetEventModel.model_validate(event_schema) for event_schema in event_schemas]
-        else:
-            return []
+        return []
