@@ -77,7 +77,6 @@ async def lifespan(app):
     async_redis_client = get_redis_client(app.state.config)
     logging.info("Initialized redis")
     app.state.async_redis_client = async_redis_client
-
     logging.info("start schedular cron job")
     start_scheduler()
 

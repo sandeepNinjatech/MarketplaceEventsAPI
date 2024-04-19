@@ -59,5 +59,11 @@ class ResponseEventModel(BaseModel):
     events: List[EventModel]
 
 
-class ResponseDataModel(BaseModel):
-    data: ResponseEventModel
+class ErrorModel(BaseModel):
+    code: str
+    message: str
+
+
+class StandardResponseModel(BaseModel):
+    data: ResponseEventModel = None
+    error: ErrorModel = None
