@@ -21,7 +21,7 @@ setup:
 # Target to run the application
 run: setup
 	@echo Starting the FastAPI application...
-	@call $(VENV_DIR)\Scripts\activate && $(UVICORN) main:app --host $(HOST) --port $(PORT) $(RELOAD)
+	@call $(VENV_DIR)\Scripts\activate && $(UVICORN) app.main:app $(RELOAD)
 
 # Optionally add a clean target to clean up the environment
 clean:
