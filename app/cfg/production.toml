@@ -1,0 +1,16 @@
+#ENVIRONMENT = "production"
+#
+#
+#
+#[db]
+#host = "l8yc5u.stackhero-network.com"
+#port = "5432"
+#database = "trading"
+#username = "admin"
+#password = "V7Bqqlbzx6zX9VAmcC0355dzZVNHdiYa"
+#
+#
+#[redis]
+#url = "redis://:m0xfzfd1vfd.redisgreen.net:11042"
+#
+#strategy_id_uuid_namespace = "570ad763"
