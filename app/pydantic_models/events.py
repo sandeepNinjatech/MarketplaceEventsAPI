@@ -1,6 +1,7 @@
 from datetime import date
 from datetime import datetime
 from datetime import time
+from typing import List
 
 from pydantic import UUID4
 from pydantic import BaseModel
@@ -9,7 +10,7 @@ from pydantic import model_validator
 from app.database.schemas import EventSchema
 
 
-class GetEventModel(BaseModel):
+class EventModel(BaseModel):
     id: UUID4
     title: str
     event_id: int
@@ -52,3 +53,11 @@ class PostEventModel(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ResponseEventModel(BaseModel):
+    events: List[EventModel]
+
+
+class ResponseDataModel(BaseModel):
+    data: ResponseEventModel
