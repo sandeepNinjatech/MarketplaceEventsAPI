@@ -43,6 +43,7 @@ class GetEventModel(BaseModel):
 
 class PostEventModel(BaseModel):
     event_id: int
+    base_event_id: int
     title: str
     start_date_time: datetime
     end_date_time: datetime
