@@ -93,14 +93,14 @@ async def parse_and_store(xml_data):
     root = etree.fromstring(xml_data)
     async with Database() as async_session:
         event_id_model_mappings = get_event_id_model_mappings(root)
-        event_id_pairs = set(event_id_model_mappings.keys())
-        event_schemas = await get_events_from_db(event_id_pairs, async_session)
+        response_event_id_pairs = set(event_id_model_mappings.keys())
+        event_schemas = await get_events_from_db(response_event_id_pairs, async_session)
 
         db_event_id_pairs = {
             f"{event_schema.base_event_id}_{event_schema.event_id}"
             for event_schema in event_schemas
         }
-        missing_event_ids = event_id_pairs - db_event_id_pairs
+        missing_event_ids = response_event_id_pairs - db_event_id_pairs
         if missing_event_ids:
             logging.info(f"missing event ids {missing_event_ids}")
         else:

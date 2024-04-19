@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 def get_app(request: Request) -> FastAPI:
-    return request.appFNO.py
+    return request.app
 
 
 async def get_config(app: FastAPI = Depends(get_app)):

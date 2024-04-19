@@ -1,16 +1,21 @@
-#ENVIRONMENT = "production"
-#
-#
-#
-#[db]
-#host = "l8yc5u.stackhero-network.com"
-#port = "5432"
-#database = "trading"
-#username = "admin"
-#password = "V7Bqqlbzx6zX9VAmcC0355dzZVNHdiYa"
-#
-#
-#[redis]
-#url = "redis://:m0xfzfd1vfd.redisgreen.net:11042"
-#
-#strategy_id_uuid_namespace = "570ad763"
+ENVIRONMENT = "production"
+
+[sentry]
+dsn = "https://ce35"
+environment = "marketplace-events"
+# add your own dsn values
+
+
+[db]
+host = "localhost"
+port = "5432"
+database = "test"
+username = "postgres"
+password = "postgres"
+
+
+[redis]
+host = "redis-12100.c233.eu-west-1-1.ec2.cloud.redislabs.com"
+port = "12100"
+password = "UmzKGgUzZkE4NMqjuzisvSUXSrLxGI6K"
+db = "test"

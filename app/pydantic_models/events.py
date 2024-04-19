@@ -37,8 +37,8 @@ class GetEventModel(BaseModel):
                 "end_date": _input.end_date_time.date(),
                 "end_time": _input.end_date_time.time(),
             }
-
             return result
+        return _input
 
 
 class PostEventModel(BaseModel):

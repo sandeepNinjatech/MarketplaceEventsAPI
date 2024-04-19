@@ -1,20 +1,24 @@
+import json
 import logging
 from datetime import datetime
 from http.client import HTTPException  # noqa
 from typing import List
 
+import aioredis
 from fastapi import APIRouter
+from fastapi import Depends
 from fastapi import Query
-from sqlalchemy import select
+from pydantic import TypeAdapter
 
-from app.database.schemas.events import EventSchema
 from app.database.session_manager.db_session import Database
+from app.endpoints.dependency import get_async_redis_client
+from app.endpoints.utils import get_events_from_db
+from app.endpoints.utils import get_events_from_redis
+from app.endpoints.utils import set_events_in_redis
 from app.pydantic_models.events import GetEventModel
 
 
-logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO)
 
 events_router = APIRouter(
     prefix="/api/v1",
@@ -26,21 +30,26 @@ events_router = APIRouter(
 async def get_events(
     starts_at: datetime = Query(..., description="Start date for filtering events"),
     ends_at: datetime = Query(..., description="End date for filtering events"),
+    redis_client: aioredis.Redis = Depends(get_async_redis_client),
 ):
     if ends_at <= starts_at:
         raise HTTPException(400, "end date should be greater than start date")
+    # redis_client = get_async_redis_client()
+    redis_key = f"events_{starts_at}_{ends_at}"
+    redis_events_json = await get_events_from_redis(redis_key, redis_client)
+    if redis_events_json:
+        redis_events = json.loads(redis_events_json)
+        result = TypeAdapter(List[GetEventModel]).validate_python(
+            [json.loads(redis_event) for redis_event in redis_events]
+        )
+        return result
+
+        # return [GetEventModel.model_validate(json.loads(redis_event)) for redis_event in redis_events]
 
     async with Database() as async_session:
-        fetch_events_query = await async_session.execute(
-            select(EventSchema).filter(
-                EventSchema.start_date_time >= starts_at,
-                EventSchema.end_date_time <= ends_at,
-            )  # noqa
-        )
-        print("data fetched")
-        events = fetch_events_query.scalars().all()
-        print(events)
-        return events
-        # result = [GetEventModel.model_dump(event) for event in events]
-        # print(result)
-        # return result
+        event_schemas = await get_events_from_db(starts_at, ends_at, async_session)
+        if event_schemas:
+            await set_events_in_redis(redis_key, event_schemas, redis_client)
+            return [GetEventModel.model_validate(event_schema) for event_schema in event_schemas]
+        else:
+            return []
